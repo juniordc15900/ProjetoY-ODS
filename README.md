@@ -11,3 +11,11 @@ Ativar ambiente virtual
 Instalar dependências
 
 * pip install -r requirements.txt
+
+Adicionar apps (endpoints)
+
+* python manage.py startapp [nome_do_app]
+
+Rodar projeto (necessario estar dentro do diretorio que contem o arquivo manage.py)
+
+* python3 manage.py runserver
