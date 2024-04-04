@@ -1,6 +1,6 @@
 # ProjetoY-ODS
 
-Criar ambiente virtual 
+Criar ambiente virtual
 
 - python3 -m venv .venv-projetoy
 
@@ -11,3 +11,7 @@ Ativar ambiente virtual
 Instalar dependências
 
 * pip install -r requirements.txt
+
+Executar Projeto localmente
+
+* python3 manage.py runserver
