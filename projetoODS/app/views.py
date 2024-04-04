@@ -5,5 +5,5 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 
-def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+def print_teste(request):
+    return HttpResponse("Teste de Endpoint")

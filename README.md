@@ -12,6 +12,10 @@ Instalar dependências
 
 * pip install -r requirements.txt
 
-Executar Projeto localmente
+Adicionar apps (endpoints)
+
+* python manage.py startapp [nome_do_app]
+
+Rodar projeto (necessario estar dentro do diretorio que contem o arquivo manage.py)
 
 * python3 manage.py runserver
