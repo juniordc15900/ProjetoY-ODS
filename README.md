@@ -7,6 +7,7 @@ Criar ambiente virtual
 Ativar ambiente virtual
 
 * source .venv-projetoy/bin/activate
+* .venv-projetoy\Scripts\activate
 
 Instalar dependências
 
