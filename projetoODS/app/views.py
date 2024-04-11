@@ -4,6 +4,9 @@ from django.shortcuts import render
 
 from django.http import HttpResponse
 
+from app.models import ExemploEntidade
+
 
 def print_teste(request):
-    return HttpResponse("Teste de Endpoint")
+    pessoa = ExemploEntidade(nome='alessandro', sobrenome='dangelo')
+    return HttpResponse(f'Nome : {pessoa.nome} {pessoa.sobrenome}')
