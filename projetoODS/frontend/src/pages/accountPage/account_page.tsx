@@ -1,4 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, ChangeEvent } from "react";
+import BasicInput from "../../components/basicInput";
+import BasicButton from "../../components/Button/basicButton";
+import BasicTitle from "../../components/basicTitle";
+import { Container, FormContainer, ImageContainer, Image } from "./style";
+import LinkButton from "../../components/Button/linkButton";
 
 const useLoginForm = () => {
   const [user, setUser] = useState("");
@@ -47,104 +52,83 @@ const AccountPage: React.FC = () => {
     toggleForm,
   } = useLoginForm();
 
+  const handleUserChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setUser(e.target.value);
+  };
+
+  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
+  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+
   return (
-    <>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <div style={{ width: "50%", padding: "20px", boxSizing: "border-box" }}>
-          <h1>Projeto Y ODS</h1>
-          {!!isLogin && (
-            <form onSubmit={handleSubmit}>
-              <input
+    <Container>
+      <FormContainer>
+        <BasicTitle>ProjODS</BasicTitle>
+        {!!isLogin && (
+          <form onSubmit={handleSubmit}>
+            <div className="forms-inputs">
+              <BasicInput
                 type="email"
                 placeholder="Email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                style={{ marginBottom: "10px", padding: "8px", width: "100%" }}
+                onChange={handleEmailChange}
               />
-              <input
+              <BasicInput
                 type="password"
                 placeholder="Senha"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                style={{ marginBottom: "10px", padding: "8px", width: "100%" }}
+                onChange={handlePasswordChange}
               />
-              <button type="submit" style={{ padding: "8px", width: "100%" }}>
-                Fazer Login
-              </button>
-              <p>Não tem uma conta?</p>
-              <button
-                onClick={toggleForm}
-                style={{ padding: "8px", width: "100%" }}
-              >
-                Criar conta
-              </button>
-            </form>
-          )}
-          {!isLogin && (
-            <form onSubmit={handleSubmit}>
-              <input
+            </div>
+            <div className="forms-buttons">
+              <BasicButton onClick={() => null}>Fazer Login</BasicButton>
+              <LinkButton onClick={toggleForm}>Criar conta</LinkButton>
+            </div>
+          </form>
+        )}
+        {!isLogin && (
+          <form onSubmit={handleSubmit}>
+            <div className="forms-inputs">
+              <BasicInput
                 type="text"
                 placeholder="Usuário"
                 value={user}
-                onChange={(e) => setUser(e.target.value)}
-                required
-                style={{ marginBottom: "10px", padding: "8px", width: "100%" }}
+                onChange={handleUserChange}
               />
-              <input
+              <BasicInput
                 type="email"
                 placeholder="Email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                style={{ marginBottom: "10px", padding: "8px", width: "100%" }}
+                onChange={handleEmailChange}
               />
-              <input
+              <BasicInput
                 type="password"
                 placeholder="Senha"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                style={{ marginBottom: "10px", padding: "8px", width: "100%" }}
+                onChange={handlePasswordChange}
               />
-              <input
+              <BasicInput
                 type="password"
                 placeholder="Confirmar senha"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                style={{ marginBottom: "10px", padding: "8px", width: "100%" }}
+                onChange={handlePasswordChange}
               />
-              <button type="submit" style={{ padding: "8px", width: "100%" }}>
-                Cadastrar
-              </button>
-              <p>Já tem uma conta?</p>
-              <button
-                onClick={toggleForm}
-                style={{ padding: "8px", width: "100%" }}
-              >
-                Fazer login
-              </button>
-            </form>
-          )}
-        </div>
-        <div style={{ width: "50%" }}>
-          <img
-            src="./img/manworking.png"
-            alt=""
-            style={{ maxWidth: "100%", height: "auto" }}
-          />
-        </div>
-      </div>
-    </>
+            </div>
+            <div className="forms-buttons">
+              <BasicButton onClick={() => null}>Cadastrar</BasicButton>
+              <LinkButton onClick={toggleForm}>Fazer login</LinkButton>
+            </div>
+          </form>
+        )}
+      </FormContainer>
+      <ImageContainer>
+        <Image src="./img/manworking.png" alt="" />
+      </ImageContainer>
+    </Container>
   );
 };
 
