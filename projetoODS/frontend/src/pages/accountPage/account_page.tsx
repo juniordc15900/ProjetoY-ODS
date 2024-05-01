@@ -4,21 +4,49 @@ import BasicButton from "../../components/Button/basicButton";
 import BasicTitle from "../../components/basicTitle";
 import { Container, FormContainer, ImageContainer, Image } from "./style";
 import LinkButton from "../../components/Button/linkButton";
+import axios from "axios";
 
 const useLoginForm = () => {
   const [user, setUser] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isLogin, setIsLogin] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isLogin) {
-      // Lógica de login
-      console.log("Login:", email, password);
+      try {
+        const response = await axios.post("/postsignIn/", {
+          email: email,
+          pass: password,
+        });
+        console.log("OK");
+        console.log(response.data);
+        // Lógica de redirecionamento após o login bem-sucedido
+      } catch (error) {
+        setErrorMessage(
+          "Credenciais inválidas! Por favor, verifique seus dados."
+        );
+      }
     } else {
-      // Lógica de cadastro
-      console.log("Signup:", user, email, password);
+      if (password !== confirmPassword) {
+        setErrorMessage("As senhas não coincidem!");
+        return;
+      }
+      try {
+        const response = await axios.post("/postsignUp/", {
+          email: email,
+          pass: password,
+          name: user,
+        });
+        console.log(response.data);
+        // Lógica de redirecionamento após o cadastro bem-sucedido
+      } catch (error) {
+        console.error(error);
+        // Lógica para tratamento de erro de cadastro
+      }
     }
   };
 
@@ -33,9 +61,12 @@ const useLoginForm = () => {
     setEmail,
     password,
     setPassword,
+    confirmPassword,
+    setConfirmPassword,
     isLogin,
     handleSubmit,
     toggleForm,
+    errorMessage,
   };
 };
 
@@ -47,9 +78,12 @@ const AccountPage: React.FC = () => {
     setEmail,
     password,
     setPassword,
+    confirmPassword,
+    setConfirmPassword,
     isLogin,
     handleSubmit,
     toggleForm,
+    errorMessage,
   } = useLoginForm();
 
   const handleUserChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -62,6 +96,10 @@ const AccountPage: React.FC = () => {
 
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
+  };
+
+  const handleConfirmPasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setConfirmPassword(e.target.value);
   };
 
   return (
@@ -85,9 +123,10 @@ const AccountPage: React.FC = () => {
               />
             </div>
             <div className="forms-buttons">
-              <BasicButton onClick={() => null}>Fazer Login</BasicButton>
+              <BasicButton type="submit">Fazer Login</BasicButton>
               <LinkButton onClick={toggleForm}>Criar conta</LinkButton>
             </div>
+            {errorMessage && <p>{errorMessage}</p>}
           </form>
         )}
         {!isLogin && (
@@ -114,14 +153,15 @@ const AccountPage: React.FC = () => {
               <BasicInput
                 type="password"
                 placeholder="Confirmar senha"
-                value={password}
-                onChange={handlePasswordChange}
+                value={confirmPassword}
+                onChange={handleConfirmPasswordChange}
               />
             </div>
             <div className="forms-buttons">
-              <BasicButton onClick={() => null}>Cadastrar</BasicButton>
+              <BasicButton type="submit">Cadastrar</BasicButton>
               <LinkButton onClick={toggleForm}>Fazer login</LinkButton>
             </div>
+            {errorMessage && <p>{errorMessage}</p>}
           </form>
         )}
       </FormContainer>
