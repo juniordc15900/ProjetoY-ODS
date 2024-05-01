@@ -3,10 +3,10 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path("app/", include("app.urls")),
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
     path('godaddy/', include('godaddy.urls')),
+    path('gemini/', include('gemini.urls')),
 
     path(' ', views.home, name="index"),
     path('/login/', views.signIn),
