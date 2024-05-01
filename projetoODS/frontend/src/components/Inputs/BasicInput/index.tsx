@@ -5,7 +5,7 @@ import * as S from "./style";
 interface InputProps {
   type: string;
   placeholder?: string;
-  value: string;
+  value?: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void; // Alterado o tipo de onChange
 }
 

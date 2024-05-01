@@ -1,9 +1,9 @@
 import React, { useState, ChangeEvent } from "react";
-import BasicInput from "../../components/basicInput";
-import BasicButton from "../../components/Button/basicButton";
-import BasicTitle from "../../components/basicTitle";
-import { Container, FormContainer, ImageContainer, Image } from "./style";
-import LinkButton from "../../components/Button/linkButton";
+import BasicInput from "../../components/Inputs/BasicInput";
+import BasicButton from "../../components/Buttons/BasicButton";
+import BasicTitle from "../../components/BasicTitle";
+import { Container, FormContainer, ImageContainer, Image, Text } from "./style";
+import LinkButton from "../../components/Buttons/LinkButton";
 import axios from "axios";
 
 const useLoginForm = () => {
@@ -52,6 +52,7 @@ const useLoginForm = () => {
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
+    setErrorMessage("");
   };
 
   return {
@@ -107,62 +108,66 @@ const AccountPage: React.FC = () => {
       <FormContainer>
         <BasicTitle>ProjODS</BasicTitle>
         {!!isLogin && (
-          <form onSubmit={handleSubmit}>
-            <div className="forms-inputs">
-              <BasicInput
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={handleEmailChange}
-              />
-              <BasicInput
-                type="password"
-                placeholder="Senha"
-                value={password}
-                onChange={handlePasswordChange}
-              />
-            </div>
-            <div className="forms-buttons">
-              <BasicButton type="submit">Fazer Login</BasicButton>
-              <LinkButton onClick={toggleForm}>Criar conta</LinkButton>
-            </div>
-            {errorMessage && <p>{errorMessage}</p>}
-          </form>
+          <>
+            <form onSubmit={handleSubmit}>
+              <div className="forms-inputs">
+                <BasicInput
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={handleEmailChange}
+                />
+                <BasicInput
+                  type="password"
+                  placeholder="Senha"
+                  value={password}
+                  onChange={handlePasswordChange}
+                />
+              </div>
+              <div className="forms-buttons">
+                <BasicButton type="submit">Fazer Login</BasicButton>
+                <LinkButton onClick={toggleForm}>Criar conta</LinkButton>
+              </div>
+            </form>
+            {errorMessage && <Text>{errorMessage}</Text>}
+          </>
         )}
         {!isLogin && (
-          <form onSubmit={handleSubmit}>
-            <div className="forms-inputs">
-              <BasicInput
-                type="text"
-                placeholder="Usuário"
-                value={user}
-                onChange={handleUserChange}
-              />
-              <BasicInput
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={handleEmailChange}
-              />
-              <BasicInput
-                type="password"
-                placeholder="Senha"
-                value={password}
-                onChange={handlePasswordChange}
-              />
-              <BasicInput
-                type="password"
-                placeholder="Confirmar senha"
-                value={confirmPassword}
-                onChange={handleConfirmPasswordChange}
-              />
-            </div>
-            <div className="forms-buttons">
-              <BasicButton type="submit">Cadastrar</BasicButton>
-              <LinkButton onClick={toggleForm}>Fazer login</LinkButton>
-            </div>
-            {errorMessage && <p>{errorMessage}</p>}
-          </form>
+          <>
+            <form onSubmit={handleSubmit}>
+              <div className="forms-inputs">
+                <BasicInput
+                  type="text"
+                  placeholder="Usuário"
+                  value={user}
+                  onChange={handleUserChange}
+                />
+                <BasicInput
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={handleEmailChange}
+                />
+                <BasicInput
+                  type="password"
+                  placeholder="Senha"
+                  value={password}
+                  onChange={handlePasswordChange}
+                />
+                <BasicInput
+                  type="password"
+                  placeholder="Confirmar senha"
+                  value={confirmPassword}
+                  onChange={handleConfirmPasswordChange}
+                />
+              </div>
+              <div className="forms-buttons">
+                <BasicButton type="submit">Cadastrar</BasicButton>
+                <LinkButton onClick={toggleForm}>Fazer login</LinkButton>
+              </div>
+            </form>
+            {errorMessage && <Text>{errorMessage}</Text>}
+          </>
         )}
       </FormContainer>
       <ImageContainer>

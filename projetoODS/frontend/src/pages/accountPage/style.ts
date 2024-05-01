@@ -17,9 +17,12 @@ export const FormContainer = styled.div`
   height: 100%;
   padding: 20px;
   box-sizing: border-box;
-  gap: 10px;
   
-
+  p {
+    margin-top: 10px;
+    color: red;
+  }
+    
   .forms-inputs {
     width: 100%;
     display: flex;
@@ -33,6 +36,8 @@ export const FormContainer = styled.div`
     align-items: center;
     justify-content: center;
     gap: 10px;
+    margin-top: 20px;
+
   }
 `;
 

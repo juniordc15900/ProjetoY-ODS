@@ -2,17 +2,16 @@ import styled from "styled-components";
 
 // Estilizando o botão com styled-components
 export const StyledButton = styled.button`
-  color: black;
+  padding: 8px 16px;
+  background-color: #111B47;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  background-color: transparent;
-  border: none;
-  outline: none;
-  padding: 0;
-  font: inherit;
+  height: 20%;
 
   &:hover {
-    text-decoration: underline;
-
+    background-color: #0056b3;
   }
 `;
