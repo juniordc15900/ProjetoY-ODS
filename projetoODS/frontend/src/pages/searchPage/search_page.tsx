@@ -5,7 +5,7 @@ import BasicButton from "../../components/Buttons/BasicButton";
 import Header from "../../components/Header";
 import BasicTitle from "../../components/Titles";
 
-const App: React.FC = () => {
+const SearchPage: React.FC = () => {
   return (
     <>
       <Header />
@@ -25,4 +25,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default SearchPage;
