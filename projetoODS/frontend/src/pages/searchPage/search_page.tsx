@@ -3,7 +3,7 @@ import * as S from "./style";
 import TextInput from "../../components/Inputs/TextInput";
 import BasicButton from "../../components/Buttons/BasicButton";
 import Header from "../../components/Header";
-import BasicTitle from "../../components/BasicTitle";
+import BasicTitle from "../../components/Titles";
 
 const App: React.FC = () => {
   return (
