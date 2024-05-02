@@ -1,13 +1,12 @@
-import AccountPage from "./pages/accountPage/account_page";
-import SearchPage from "./pages/searchPage/search_page";
+import { AuthProvider } from "./contexts/auth";
 import { RoutesApp } from "./routes";
 
 function App() {
   return (
     <>
-      <RoutesApp />
-      {/* <AccountPage /> */}
-      {/* <SearchPage /> */}
+      <AuthProvider>
+        <RoutesApp />
+      </AuthProvider>
     </>
   );
 }

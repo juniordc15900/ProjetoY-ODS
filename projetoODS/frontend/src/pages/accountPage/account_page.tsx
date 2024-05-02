@@ -1,13 +1,14 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { ChangeEvent, useState } from "react";
 import BasicInput from "../../components/Inputs/BasicInput";
 import BasicButton from "../../components/Buttons/BasicButton";
 import BasicTitle from "../../components/Titles";
 import { Container, FormContainer, ImageContainer, Image, Text } from "./style";
 import LinkButton from "../../components/Buttons/LinkButton";
-import axios from "axios";
+import { useAuth } from "../../contexts/auth";
 
-const useLoginForm = () => {
-  const [user, setUser] = useState("");
+const AccountPage: React.FC = () => {
+  const { signin, signup } = useAuth();
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -18,12 +19,8 @@ const useLoginForm = () => {
     e.preventDefault();
     if (isLogin) {
       try {
-        const response = await axios.post("/postsignIn/", {
-          email: email,
-          pass: password,
-        });
-        console.log("OK");
-        console.log(response.data);
+        await signin(email, password);
+        console.log("Login bem-sucedido");
         // Lógica de redirecionamento após o login bem-sucedido
       } catch (error) {
         setErrorMessage(
@@ -36,16 +33,11 @@ const useLoginForm = () => {
         return;
       }
       try {
-        const response = await axios.post("/postsignUp/", {
-          email: email,
-          pass: password,
-          name: user,
-        });
-        console.log(response.data);
+        await signup(email, password);
+        console.log("Cadastro bem-sucedido");
         // Lógica de redirecionamento após o cadastro bem-sucedido
       } catch (error) {
         console.error(error);
-        // Lógica para tratamento de erro de cadastro
       }
     }
   };
@@ -55,40 +47,8 @@ const useLoginForm = () => {
     setErrorMessage("");
   };
 
-  return {
-    user,
-    setUser,
-    email,
-    setEmail,
-    password,
-    setPassword,
-    confirmPassword,
-    setConfirmPassword,
-    isLogin,
-    handleSubmit,
-    toggleForm,
-    errorMessage,
-  };
-};
-
-const AccountPage: React.FC = () => {
-  const {
-    user,
-    setUser,
-    email,
-    setEmail,
-    password,
-    setPassword,
-    confirmPassword,
-    setConfirmPassword,
-    isLogin,
-    handleSubmit,
-    toggleForm,
-    errorMessage,
-  } = useLoginForm();
-
-  const handleUserChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setUser(e.target.value);
+  const handleUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value);
   };
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -139,8 +99,8 @@ const AccountPage: React.FC = () => {
                 <BasicInput
                   type="text"
                   placeholder="Usuário"
-                  value={user}
-                  onChange={handleUserChange}
+                  value={username}
+                  onChange={handleUsernameChange}
                 />
                 <BasicInput
                   type="email"
