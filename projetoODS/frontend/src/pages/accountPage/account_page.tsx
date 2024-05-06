@@ -18,7 +18,7 @@ const useLoginForm = () => {
     e.preventDefault();
     if (isLogin) {
       try {
-        const response = await axios.post("/postsignIn/", {
+        const response = await axios.post("http://localhost:8000/postsignIn/", {
           email: email,
           pass: password,
         });
@@ -36,7 +36,7 @@ const useLoginForm = () => {
         return;
       }
       try {
-        const response = await axios.post("/postsignUp/", {
+        const response = await axios.post("http://localhost:8000/postsignUp/", {
           email: email,
           pass: password,
           name: user,
