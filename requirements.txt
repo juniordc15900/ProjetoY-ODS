@@ -3,3 +3,4 @@ google-generativeai==0.4.1
 nltk==3.8.1
 googletrans==4.0.0rc1
 langdetect==1.0.9
+pyrebase4

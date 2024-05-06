@@ -70,7 +70,12 @@ def verificar_disponibilidade(dominios, api_key, api_secret):
 def verificar_dominios(request):
     api_key = '3mM44UdBmPLDAc_DNoMUWyojvJB8U4XsgyKgv'
     api_secret = 'RuxjJSCVp2BnptYT11AF5X'
-    dominios = ['testandositesaquiemcasa.com', 'facebook.com', 'godaddy.com', 'projeto.world', 'projeto2.com', 'gmail.com']
+    
+    body_bytes = request.body
+    body_str = body_bytes.decode('utf-8')
+    json_data = json.loads(body_str)
+    
+    dominios = json_data.get('dominios')
     resultados = verificar_disponibilidade(dominios, api_key, api_secret)
 
     # Preparar a resposta como um JSON
