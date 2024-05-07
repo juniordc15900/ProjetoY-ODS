@@ -1,9 +1,9 @@
 from django.db import models
+import nltk
 from googletrans import Translator
 from langdetect import detect
 import re
 import google.generativeai as genai
-import nltk
 
 nltk.download('wordnet')
 
@@ -21,9 +21,9 @@ class GeminiAssistant:
 
         palavras_relacionadas = self.gerar_palavras_relacionadas(palavras_principais)
         palavras_relacionadas_lista = palavras_relacionadas.split('\n')
-        palavras = [p.lower().replace('-', '') for p in palavras_relacionadas_lista if p.strip()]  
+        palavras = [p.lower().replace('-', '') for p in palavras_relacionadas_lista if p.strip()] 
 
-        extensoes_br = ["com.br", "net.br", "org.br", "com", "br", "net"]  
+        extensoes_br = ["com.br", "net.br", "org.br", "com", "br", "net"] 
         dominios_br = self.gerar_dominios(palavras, extensoes_br)
 
         print("Domínios Brasileiros:")
@@ -53,7 +53,7 @@ class GeminiAssistant:
             palavra_sem_acentos = re.sub(r'[úùûü]', 'u', palavra_sem_acentos, flags=re.IGNORECASE)
             palavra_sem_acentos = re.sub(r'[ç]', 'c', palavra_sem_acentos, flags=re.IGNORECASE)
             palavra_sem_acentos = re.sub(r'[^a-zA-Z0-9-]', '', palavra_sem_acentos)  
-            palavra_sem_acentos = palavra_sem_acentos.replace(' ', '-')  
+            palavra_sem_acentos = palavra_sem_acentos.replace(' ', '-') 
             for extensao in extensoes:
                 dominios.append(f"{palavra_sem_acentos}.{extensao}")
         return dominios
@@ -63,8 +63,27 @@ class GeminiAssistant:
         prompt_palavras_relacionadas = f"A partir da lista {palavras_string}, gere uma nova lista para cada item com 10 sinônimos/palavras relacionadas seguindo o seguinte modelo:\n\nPalavra1\nSinônimo1\nSinônimo2\nSinônimo3\nSinônimo4\n...\nSinônimo10\n\nPalavra2\nSinônimo1\nSinônimo2\nSinônimo3\nSinônimo4\n...\nSinônimo10\n\nPalavra3\n...\n\n(Não escreva nenhuma definição. Apenas LISTE as palavras)"
         resposta_palavras_relacionadas = self.model.generate_content(prompt_palavras_relacionadas)
         return resposta_palavras_relacionadas.text
+    
+    def refinar(self, urls_geradas, urls_selecionadas, num_novas_urls):
+        
+        urls_geradas_string = ""
+        urls_selecionadas_string = ""
+        
+        for url in urls_geradas:
+            urls_geradas_string = urls_geradas_string + f"{url}\n"
+        
+        for url in urls_selecionadas:
+            urls_selecionadas_string = urls_selecionadas_string + f"{url}\n"
+        
+        prompt_refino = f"A partir da lista a seguir:\n\n {urls_geradas_string}\nApenas os seguintes itens são úteis:\n\n {urls_selecionadas_string}\nGere outros {num_novas_urls} domínios semelhantes a esses"
+    
+        resposta_refino = self.model.generate_content(prompt_refino)
+
+        print("Refino\n" + resposta_refino.text, end="\n\n")
+        
+        return resposta_refino.text
 
 if __name__ == '__main__':
     assistant = GeminiAssistant()
-    palavras_principais = ["Floricultura", "Lótus", "Rosas"]
+    palavras_principais = ["Universidade", "Instituição", "Televisão"]
     assistant.iniciar_chat(palavras_principais)
