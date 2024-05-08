@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import BasicInput from "../../components/Inputs/BasicInput";
 import BasicButton from "../../components/Buttons/BasicButton";
 import BasicTitle from "../../components/Titles";
@@ -13,18 +13,41 @@ const useLoginForm = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLogin, setIsLogin] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [csrfToken, setCSRFToken] = useState("");
+
+  useEffect(() => {
+    const fetchCSRFToken = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/csrf/");
+        const csrfToken = response.data.csrfToken;
+        setCSRFToken(csrfToken);
+      } catch (error) {
+        console.error("Failed to fetch CSRF token:", error);
+      }
+    };
+    fetchCSRFToken();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isLogin) {
       try {
-        const response = await axios.post("http://localhost:8000/postsignIn/", {
-          email: email,
-          pass: password,
-        });
+        const response = await axios.post(
+          "http://localhost:8000/postsignIn/",
+          {
+            email: email,
+            pass: password,
+          },
+          {
+            withCredentials: true,
+            headers: {
+              "X-CSRFToken": csrfToken,
+            },
+          }
+        );
         console.log("OK");
         console.log(response.data);
-        // Lógica de redirecionamento após o login bem-sucedido
+        // Logic for redirection after successful login
       } catch (error) {
         setErrorMessage(
           "Credenciais inválidas! Por favor, verifique seus dados."
@@ -36,16 +59,25 @@ const useLoginForm = () => {
         return;
       }
       try {
-        const response = await axios.post("http://localhost:8000/postsignUp/", {
-          email: email,
-          pass: password,
-          name: user,
-        });
+        const response = await axios.post(
+          "http://localhost:8000/postsignUp/",
+          {
+            email: email,
+            pass: password,
+            name: user,
+          },
+          {
+            headers: {
+              "X-CSRFToken": csrfToken,
+            },
+            withCredentials: true,
+          }
+        );
         console.log(response.data);
-        // Lógica de redirecionamento após o cadastro bem-sucedido
+        // Logic for redirection after successful registration
       } catch (error) {
         console.error(error);
-        // Lógica para tratamento de erro de cadastro
+        // Logic for registration error handling
       }
     }
   };
