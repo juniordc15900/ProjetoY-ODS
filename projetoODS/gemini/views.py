@@ -57,8 +57,9 @@ def gerar_dominios(palavras, extensoes):
     return dominios
 
 def gerar_palavras_relacionadas(palavras,assistant: GeminiAssistant):
-    palavras_string = ", ".join(palavras)
+    palavras_string = palavras.split(',')
     # prompt_palavras_relacionadas = f"A partir da lista {palavras_string}, gere uma nova lista para cada item com sinônimos/palavras relacionadas seguindo o seguinte modelo:\n\nPalavra1\nSinônimo1\nSinônimo2\nSinônimo3\nSinônimo4\n...\nSinônimo10\n\nPalavra2\nSinônimo1\nSinônimo2\nSinônimo3\nSinônimo4\n...\nSinônimo10\n\nPalavra3\n...\n\n(Não escreva nenhuma definição. Apenas LISTE as palavras e quero no maximo uma lista de ate 10 palavras)"
+    print(palavras_string)
     prompt_palavras_relacionadas = f"A partir da lista {palavras_string},gere uma lista de sinonimos para cada palavra dessa lista que te passei. Observação: deve conter somente 1 sinonimo por palavra da lista."
     resposta_palavras_relacionadas = assistant.model.generate_content(prompt_palavras_relacionadas)
     return resposta_palavras_relacionadas.text
