@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent } from "react";
 import BasicInput from "../../components/Inputs/BasicInput";
 import BasicButton from "../../components/Buttons/BasicButton";
-import BasicTitle from "../../components/BasicTitle";
+import BasicTitle from "../../components/basicTitle";
 import { Container, FormContainer, ImageContainer, Image, Text } from "./style";
 import LinkButton from "../../components/Buttons/LinkButton";
 import axios from "axios";

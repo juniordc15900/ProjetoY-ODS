@@ -1,8 +1,9 @@
 import json
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 import re
 from gemini.models import GeminiAssistant
+from godaddy.views import verificar_dominios
 
 def gemini_dominios(request):
     assistant = GeminiAssistant()
@@ -15,7 +16,10 @@ def gemini_dominios(request):
     # palavras_principais = ["Floricultura", "Lótus", "Rosas"]
     response = iniciar_chat(palavras_principais,assistant)
     response_data = {'dominios': response}
-    return JsonResponse(response_data)
+    print(response_data)
+    response = verificar_dominios(response_data)
+    return HttpResponse(response)
+
 def iniciar_chat(palavras_principais,assistant:GeminiAssistant):
         bem_vindo = "##"
         print(len(bem_vindo) * "#")

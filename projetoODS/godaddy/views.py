@@ -7,31 +7,26 @@ import json
 def verificar_disponibilidade(dominios, api_key, api_secret):
     resultados = {}
 
-    for dominio in dominios:
+    for dominio in dominios['dominios']:
         curl_command = f'curl -X GET -H "Authorization: sso-key {api_key}:{api_secret}" "https://api.ote-godaddy.com/v1/domains/available?domain={dominio}&checkType=FAST&forTransfer=false"'
 
         try:
             resultado = subprocess.run(curl_command, capture_output=True, text=True, shell=True)
             resposta_json = json.loads(resultado.stdout)
+            print(resposta_json)
             if resultado.returncode == 0:
                 disponivel = resposta_json.get('available', False)
-                resultados[dominio] = disponivel
-            else:
-                resultados[dominio] = False
+                if disponivel:
+                    resultados[dominio] = {"disponibilidade":'Disponível' if disponivel else 'Indisponível',"preço em USD":resposta_json.get('price', False)}
         except Exception as e:
-            resultados[dominio] = False
+            print(e)
 
     return resultados
 
-def verificar_dominios(request):
+def verificar_dominios(dominios):
     api_key = '3mM44UdBmPLDAc_DNoMUWyojvJB8U4XsgyKgv'
     api_secret = 'RuxjJSCVp2BnptYT11AF5X'
     
-    body_bytes = request.body
-    body_str = body_bytes.decode('utf-8')
-    json_data = json.loads(body_str)
-    
-    dominios = json_data.get('dominios')
     resultados = verificar_disponibilidade(dominios, api_key, api_secret)
 
     # Preparar a resposta como um JSON
