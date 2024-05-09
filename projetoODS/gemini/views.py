@@ -7,18 +7,15 @@ from godaddy.views import verificar_dominios
 
 def gemini_dominios(request):
     assistant = GeminiAssistant()
-    
-    body_bytes = request.body
-    body_str = body_bytes.decode('utf-8')
-    json_data = json.loads(body_str)
-    
-    palavras_principais = json_data.get('palavras')
+    palavras_principais = request.GET['palavras']
     # palavras_principais = ["Floricultura", "Lótus", "Rosas"]
     response = iniciar_chat(palavras_principais,assistant)
     response_data = {'dominios': response}
     print(response_data)
     response = verificar_dominios(response_data)
     return HttpResponse(response)
+def teste(request):
+    return HttpResponse('testou e deu certo')
 
 def iniciar_chat(palavras_principais,assistant:GeminiAssistant):
         bem_vindo = "##"
@@ -61,6 +58,7 @@ def gerar_dominios(palavras, extensoes):
 
 def gerar_palavras_relacionadas(palavras,assistant: GeminiAssistant):
     palavras_string = ", ".join(palavras)
-    prompt_palavras_relacionadas = f"A partir da lista {palavras_string}, gere uma nova lista para cada item com 10 sinônimos/palavras relacionadas seguindo o seguinte modelo:\n\nPalavra1\nSinônimo1\nSinônimo2\nSinônimo3\nSinônimo4\n...\nSinônimo10\n\nPalavra2\nSinônimo1\nSinônimo2\nSinônimo3\nSinônimo4\n...\nSinônimo10\n\nPalavra3\n...\n\n(Não escreva nenhuma definição. Apenas LISTE as palavras)"
+    # prompt_palavras_relacionadas = f"A partir da lista {palavras_string}, gere uma nova lista para cada item com sinônimos/palavras relacionadas seguindo o seguinte modelo:\n\nPalavra1\nSinônimo1\nSinônimo2\nSinônimo3\nSinônimo4\n...\nSinônimo10\n\nPalavra2\nSinônimo1\nSinônimo2\nSinônimo3\nSinônimo4\n...\nSinônimo10\n\nPalavra3\n...\n\n(Não escreva nenhuma definição. Apenas LISTE as palavras e quero no maximo uma lista de ate 10 palavras)"
+    prompt_palavras_relacionadas = f"A partir da lista {palavras_string},gere uma lista de sinonimos para cada palavra dessa lista que te passei. Observação: deve conter somente 1 sinonimo por palavra da lista."
     resposta_palavras_relacionadas = assistant.model.generate_content(prompt_palavras_relacionadas)
     return resposta_palavras_relacionadas.text

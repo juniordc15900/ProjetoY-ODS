@@ -18,9 +18,7 @@ const useLoginForm = () => {
     e.preventDefault();
     if (isLogin) {
       try {
-        const response = await axios.post("/postsignIn/", {
-          email: email,
-          pass: password,
+        const response = await axios.get("http://127.0.0.1:8000/gemini/teste", {
         });
         console.log("OK");
         console.log(response.data);

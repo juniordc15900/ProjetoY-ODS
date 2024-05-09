@@ -5,3 +5,4 @@ nltk==3.8.1
 googletrans==4.0.0rc1
 langdetect==1.0.9
 pyrebase4
+django-cors-headers==4.3.1
