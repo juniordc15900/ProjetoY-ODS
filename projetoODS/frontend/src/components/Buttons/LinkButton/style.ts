@@ -14,6 +14,8 @@ export const StyledButton = styled.button`
   text-decoration: none;
   font-size: 15px;
   font-weight: bold;
+  width: 100%;
+
 
   &:hover {
     text-decoration: underline;

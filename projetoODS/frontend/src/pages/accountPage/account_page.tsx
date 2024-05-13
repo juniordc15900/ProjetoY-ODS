@@ -18,8 +18,10 @@ const useLoginForm = () => {
     e.preventDefault();
     if (isLogin) {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/gemini/teste", {
-        });
+        const response = await axios.get(
+          "http://127.0.0.1:8000/gemini/teste",
+          {}
+        );
         console.log("OK");
         console.log(response.data);
         // Lógica de redirecionamento após o login bem-sucedido
@@ -123,7 +125,7 @@ const AccountPage: React.FC = () => {
                 />
               </div>
               <div className="forms-buttons">
-                <BasicButton type="submit">Fazer Login</BasicButton>
+                <BasicButton type="submit">Login</BasicButton>
                 <LinkButton onClick={toggleForm}>Criar conta</LinkButton>
               </div>
             </form>
