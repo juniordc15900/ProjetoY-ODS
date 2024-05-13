@@ -9,7 +9,7 @@ export const AppContainer = styled.div`
   background-size: cover;
   background-repeat: no-repeat;
   padding-top: 120px;
-  min-height: calc(100vh - 100px); /* 100vh - padding-top do Header */
+  min-height: calc(100vh - 120px); /* 100vh - padding-top do Header */
 `;
 
 export const Content = styled.div`
