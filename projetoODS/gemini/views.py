@@ -3,7 +3,6 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 import re
 from gemini.models import GeminiAssistant
-from godaddy.views import verificar_dominios
 
 def gemini_dominios(request):
     assistant = GeminiAssistant()
@@ -11,9 +10,7 @@ def gemini_dominios(request):
     # palavras_principais = ["Floricultura", "Lótus", "Rosas"]
     response = iniciar_chat(palavras_principais,assistant)
     response_data = {'dominios': response}
-    print(response_data)
-    response = verificar_dominios(response_data)
-    return HttpResponse(response)
+    return HttpResponse(response_data)
 def teste(request):
     return HttpResponse('testou e deu certo')
 
