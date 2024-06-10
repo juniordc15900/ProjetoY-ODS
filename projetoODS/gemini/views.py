@@ -4,6 +4,9 @@ from django.shortcuts import render
 import re
 from gemini.models import GeminiAssistant
 from godaddy.views import verificar_dominios
+import random
+from langdetect import detect
+from googletrans import Translator
 
 def gemini_dominios(request):
     assistant = GeminiAssistant()
@@ -63,3 +66,33 @@ def gerar_palavras_relacionadas(palavras,assistant: GeminiAssistant):
     prompt_palavras_relacionadas = f"A partir da lista {palavras_string},gere uma lista de sinonimos para cada palavra dessa lista que te passei. Observação: deve conter somente 1 sinonimo por palavra da lista."
     resposta_palavras_relacionadas = assistant.model.generate_content(prompt_palavras_relacionadas)
     return resposta_palavras_relacionadas.text
+
+def refinar(urls_geradas, urls_selecionadas, num_novas_urls, assistant: GeminiAssistant):
+    termos_comuns = ["loja", "store", "supermercado", "mercado", "gym", "instituto"]
+    urls_geradas_string = "\n".join(urls_geradas)
+    urls_selecionadas_string = "\n".join(urls_selecionadas)
+
+    prompt_refino = f"A partir da lista a seguir:\n\n{urls_geradas_string}\nApenas os seguintes itens são úteis:\n\n{urls_selecionadas_string}\nGere outros {num_novas_urls} domínios semelhantes a esses"
+
+    resposta_refino = assistant.model.generate_content(prompt_refino)
+
+    palavras_refinadas = resposta_refino.text.split('\n')
+    palavras_refinadas = [palavra.strip() for palavra in palavras_refinadas if palavra.strip() and not re.search(r'\d', palavra)]
+
+    random.shuffle(palavras_refinadas)
+
+    combinacoes = []
+    for palavra in palavras_refinadas:
+        for termo_comum in termos_comuns:
+            combinacoes.append(f"{termo_comum}-{palavra}")
+            combinacoes.append(f"{palavra}-{termo_comum}")
+
+    todas_palavras = palavras_refinadas + combinacoes
+
+    random_combinacoes = random.sample(todas_palavras, min(num_novas_urls, len(todas_palavras)))
+
+    dominios_refinados = gerar_dominios(random_combinacoes, ["com.br", "net.br", "org.br", "com", "br", "net"])
+
+    print("Domínios Refinados:\n" + "\n".join(dominios_refinados), end="\n\n")
+
+    return dominios_refinados
