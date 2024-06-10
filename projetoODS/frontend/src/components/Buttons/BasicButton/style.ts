@@ -9,8 +9,8 @@ export const StyledButton = styled.button`
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  height: 20%;
-  width: 100%;
+  height: 10%;
+  width: 80%;
 
   &:hover {
     background-color: #0056b3;
