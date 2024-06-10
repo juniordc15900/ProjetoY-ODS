@@ -9,8 +9,9 @@ def gemini_dominios(request):
     palavras_principais = request.GET['palavras']
     # palavras_principais = ["Floricultura", "Lótus", "Rosas"]
     response = iniciar_chat(palavras_principais,assistant)
+    print(response)
     response_data = {'dominios': response}
-    return HttpResponse(response_data)
+    return HttpResponse(json.dumps(response_data))
 def teste(request):
     return HttpResponse('testou e deu certo')
 
