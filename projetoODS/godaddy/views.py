@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
+from datetime import datetime, timezone
+import requests
 import subprocess
 import json
 import time
@@ -81,3 +83,118 @@ def verificar_dominios(request):
     # Preparar a resposta como um JSON
     response_data = {'resultados': resultados}
     return JsonResponse(response_data)
+
+def compra_dominio(request):
+    api_key = '3mM44UdBmPLDAc_DNoMUWyojvJB8U4XsgyKgv'
+    api_secret = 'RuxjJSCVp2BnptYT11AF5X'
+
+    domain = 'testandositesaquiemcasa.com'
+    current_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    # Construa o cabeçalho de autorização
+    headers = {
+        "accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": f"sso-key {api_key}:{api_secret}"
+    }
+
+    addr = 'Av. Visc. do Rio Preto'
+    cidade = 'Sao Joao Del Rei'
+    pais = 'BR'
+    cep = '36301-360'
+    estado = 'MG'
+    email = 'projeto.y.ods@gmail.com'
+    job = 'vendedor'
+    p_nome = 'projeto'
+    m_nome = 'y'
+    u_nome = 'ods'
+    telefone = '+55.31983857710'
+
+    # Construa o corpo da solicitação
+    payload = {
+        "contactAdmin": {
+            "addressMailing": {
+                "address1": addr,
+                "city": cidade,
+                "country": pais,
+                "postalCode": cep,
+                "state": estado
+            },
+            "email": email,
+            "jobTitle": job,
+            "nameFirst": p_nome,
+            "nameLast": u_nome,
+            "nameMiddle": m_nome,
+            "phone": telefone
+        },
+        "contactBilling": {
+            "addressMailing": {
+                "address1": addr,
+                "city": cidade,
+                "country": pais,
+                "postalCode": cep,
+                "state": estado
+            },
+            "email": email,
+            "jobTitle": job,
+            "nameFirst": p_nome,
+            "nameLast": u_nome,
+            "nameMiddle": m_nome,
+            "phone": telefone
+        },
+        "contactRegistrant": {
+            "addressMailing": {
+                "address1": addr,
+                "city": cidade,
+                "country": pais,
+                "postalCode": cep,
+                "state": estado
+            },
+            "email": email,
+            "jobTitle": job,
+            "nameFirst": p_nome,
+            "nameLast": u_nome,
+            "nameMiddle": m_nome,
+            "phone": telefone
+        },
+        "contactTech": {
+            "addressMailing": {
+                "address1": addr,
+                "city": cidade,
+                "country": pais,
+                "postalCode": cep,
+                "state": estado
+            },
+            "email": email,
+            "jobTitle": job,
+            "nameFirst": p_nome,
+            "nameLast": u_nome,
+            "nameMiddle": m_nome,
+            "phone": telefone
+        },
+        "consent": {
+            "agreedAt": current_time,
+            "agreedBy": "127.0.0.1",  # Substitua pelo endereço IP do consentidor se disponível
+            "agreementKeys": [
+                "DNRA"
+            ]
+        },
+        "domain": domain,
+        "period": 1,
+        "privacy": False,
+        "renewAuto": False
+    }
+
+    # Faça a solicitação HTTP POST
+    url = "https://api.ote-godaddy.com/v1/domains/purchase"
+    response = requests.post(url, headers=headers, json=payload)
+
+    # Verifique o resultado da solicitação
+    if response.status_code == 200:
+        return HttpResponse("Compra do domínio realizada com sucesso!")
+    else:
+        error_message = f"Erro ao tentar comprar o domínio. Detalhes do erro: {response.text}"
+        print(error_message)  # Exibe o erro no console
+        return HttpResponse(error_message)
+    
+    
