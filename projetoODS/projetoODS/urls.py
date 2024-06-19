@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     path("godaddy/", include("godaddy.urls")),
     path("gemini/", include("gemini.urls")),
+    path("nomerecomenda/", include("nomerecomenda.urls")),
 	path('admin/', admin.site.urls),
 	path('/', views.home, name ="index"),
     path('login/', views.signIn),
@@ -13,5 +14,4 @@ urlpatterns = [
     path('logout/', views.logout, name="log"),
     path('postsignUp/', views.postsignUp),
     path("search/", include("flow.urls")),
-    
 ]
