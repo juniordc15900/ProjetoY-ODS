@@ -11,10 +11,6 @@ interface Message {
   text: string;
 }
 
-interface SearchResult {
-  [key: string]: any;
-}
-
 const formatPrice = (price: string | number): string => {
   const numericPrice =
     typeof price === "string"
@@ -29,9 +25,7 @@ const formatPrice = (price: string | number): string => {
 const ChatPage: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
-  const [searchResults, setSearchResults] = useState<SearchResult | undefined>(
-    undefined
-  );
+  const [searchResults, setSearchResults] = useState<string[]>([]); // Initialize as string[] for domain names
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -57,14 +51,22 @@ const ChatPage: React.FC = () => {
     };
 
     setMessages([...messages, newMessage]);
-    setInputValue(""); // Limpar o valor da entrada
+    setInputValue("");
 
     setLoading(true);
     try {
       const response = await axios.get(
         `http://127.0.0.1:8000/gemini/gemini-dominios?palavras=${inputValue}`
       );
-      setSearchResults(response.data.resultados);
+      console.log(response);
+
+      if (Array.isArray(response.data.dominios)) {
+        const domains: string[] = response.data.dominios;
+        setSearchResults(domains);
+        console.log(domains);
+      } else {
+        console.error("Unexpected response structure:", response.data);
+      }
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -104,24 +106,15 @@ const ChatPage: React.FC = () => {
           </form>
         </S.SearchContainer>
         <S.SearchResultsContainer>
-          {searchResults && (
+          {searchResults.length > 0 && (
             <>
-              {Object.entries(searchResults).map(([dominio, info]) => (
-                <S.SearchResultItem key={dominio}>
-                  <S.SearchResultTitle>{dominio}</S.SearchResultTitle>
+              {searchResults.map((domainObject, index) => (
+                <S.SearchResultItem key={index}>
+                  <S.SearchResultTitle>
+                    {Object.values(domainObject)}
+                  </S.SearchResultTitle>
                   <hr />
-                  <ul>
-                    {Object.entries(info).map(([chave, valor]) => (
-                      <li key={chave}>
-                        <S.SearchResultDetail>
-                          <strong>{chave}:</strong>{" "}
-                          {typeof valor === "string"
-                            ? valor
-                            : JSON.stringify(formatPrice(valor as string))}
-                        </S.SearchResultDetail>
-                      </li>
-                    ))}
-                  </ul>
+                  {/* Render details for each domain if needed */}
                 </S.SearchResultItem>
               ))}
             </>
