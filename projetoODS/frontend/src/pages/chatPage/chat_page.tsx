@@ -25,7 +25,7 @@ const formatPrice = (price: string | number): string => {
 const ChatPage: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
-  const [searchResults, setSearchResults] = useState<string[]>([]); // Initialize as string[] for domain names
+  const [searchResults, setSearchResults] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -114,7 +114,6 @@ const ChatPage: React.FC = () => {
                     {Object.values(domainObject)}
                   </S.SearchResultTitle>
                   <hr />
-                  {/* Render details for each domain if needed */}
                 </S.SearchResultItem>
               ))}
             </>
