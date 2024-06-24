@@ -1,14 +1,17 @@
 import React from "react";
 import * as S from "../searchPage/style";
 import Header from "../../components/Header";
+import StripeCheckout from "../../components/Stripe/CheckoutForm";
 
-const paymentPage: React.FC = () => {
+const PaymentPage: React.FC = () => {
   return (
     <S.AppContainer>
       <Header />
-      <S.Content></S.Content>
+      <S.Content>
+        <StripeCheckout />
+      </S.Content>
     </S.AppContainer>
   );
 };
 
-export default paymentPage;
+export default PaymentPage;

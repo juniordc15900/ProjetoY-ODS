@@ -48,10 +48,14 @@ export const SearchResultsContainer = styled.div`
   width: 60%;
   /* overflow-y: scroll;
   max-height: 350px; */
-  padding: 10px;
+  justify-content: center;
+
+  .link{
+    text-decoration: none;
+  }
 `;
 
-export const SearchResultItem = styled.div`
+export const SearchResultItem = styled.a`
   background-color: #f9f9f9;
   padding: 20px;
   border-radius: 10px;
@@ -62,6 +66,9 @@ export const SearchResultItem = styled.div`
 export const SearchResultTitle = styled.h3`
   margin-bottom: 10px;
   color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 export const SearchResultDetail = styled.p`
@@ -80,4 +87,23 @@ export const SearchResultsWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  
+`;
+export const PaymentContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(10, 23, 55, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+
+  .payment-form {
+    width: 100%;
+  }
+
+
 `;

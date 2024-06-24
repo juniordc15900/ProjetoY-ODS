@@ -11,12 +11,3 @@ export const AppContainer = styled.div`
   padding-top: 120px;
   min-height: calc(100vh - 120px);
 `;
-
-export const Content = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 90%;
-  max-width: 800px;
-  padding: 20px;
-`;

@@ -8,9 +8,9 @@ export const RoutesApp = () => {
   return (
     <Router>
       <Switch>
-        <Route path="/" component={SearchPage} />
-        <Route path="/home" component={SearchPage} />
-        <Route path="/chat" component={ChatPage} />
+        <Route path="/" component={ChatPage} />
+        <Route path="/home" component={ChatPage} />
+        <Route path="/search" component={SearchPage} />
         <Route path="/register" component={AccountPage} />
         <Route path="/login" component={AccountPage} />
         <Route path="/payment" component={PaymentPage} />
