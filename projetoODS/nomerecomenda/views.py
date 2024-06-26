@@ -4,44 +4,6 @@ from nomerecomenda.models import GeminiNomeRecomenda
 import re
 import random
 
-'''
-def extract_numbers(input_string):
-    numbers = re.findall(r'\d+', input_string)
-    numbers = [int(num) for num in numbers]
-
-    return numbers
-'''
-'''
-def escolherMelhoresNomes(nomesEscolhidos, listaDeNomes):
-
-    print("\nQual dos seguintes nomes mais lhe agrada? Caso nenhum deles seja escolhido, aperte ENTER")
-    
-    for index, nome in enumerate(listaDeNomes):
-        print(f"{index+1}. {nome}")
-    
-    escolha = input()
-    escolha = extract_numbers(escolha)
-    
-    for i in escolha:
-        nomesEscolhidos.append(listaDeNomes[i-1])
-'''
-'''
-def initPrompt(prompt, perguntasLista):
-    
-        comandoPrincipal = "Estou com dificuldades para escolher o nome do meu novo empreendimento. Gere uma lista de nomes a partir das seguintes perguntas e respostas:\n"
-        
-        perguntaInicial = "Quais são as palavras-chave que identificam seu empreendimento?"
-        print(perguntaInicial)
-        respostaPerguntaInicial = input()
-        perguntasLista.append(f"{perguntaInicial}\nR: {respostaPerguntaInicial}")
-        
-        detalhesComando = "Gere uma lista no seguinte modelo:\n\nLista - Gemini\n\n1. -----\n2. -----\n3. -----\n....\n\nNão adicione dicas, título, descrições ou qualquer texto extra"
-        
-        prompt = f"{comandoPrincipal}\n\n{perguntaInicial}\nResposta: {respostaPerguntaInicial}\n\n{detalhesComando}"
-        
-        return prompt
-'''
-
 def print_teste(request):
     return HttpResponse("Teste de Endpoint")
 
@@ -56,6 +18,17 @@ def initPerguntasPadrao():
 
 def fazPergunta(assistant, perguntasPadrao, perguntasLista):
     
+    perguntas_para_remover = []
+
+    for pergunta in perguntasPadrao:
+        for pergunta_resposta in perguntasLista:
+            if pergunta in pergunta_resposta:
+                perguntas_para_remover.append(pergunta)
+                break
+    
+    for pergunta in perguntas_para_remover:
+        perguntasPadrao.remove(pergunta)
+
     if(len(perguntasPadrao) > 0):
         index = random.randint(0, len(perguntasPadrao)-1)
         perguntaSelecionada = perguntasPadrao[index]
@@ -64,6 +37,7 @@ def fazPergunta(assistant, perguntasPadrao, perguntasLista):
         return perguntaSelecionada
     else:
         return gerarNovaPergunta(assistant, perguntasLista)
+
     
 def receberResposta(perguntaFeita, resposta, perguntasLista):
     len(perguntasLista) - 1
@@ -92,7 +66,7 @@ def novoPrompt(perguntas):
         perguntasRespostas = perguntasRespostas + pergunta
         perguntasRespostas = perguntasRespostas + "\n"
     
-    detalhesComando = "Gere uma lista no seguinte modelo:\n\nLista - Gemini\n\n1. -----\n2. -----\n3. -----\n....\n\nNão adicione dicas, título, descrições ou qualquer texto extra"
+    detalhesComando = "Gere uma lista no seguinte modelo:\n\nLista - Gemini\n\n1. -----\n2. -----\n3. -----\n....\n\nNão adicione dicas, título, descrições ou qualquer texto extra. Busque ser criativo e evite gerar nomes genéricos"
     
     prompt = f"{comandoPrincipal}\n\n{perguntasRespostas}\n{detalhesComando}"
     
@@ -105,7 +79,7 @@ def formataNomes(promptResponse):
 
     for line in lines[2:]:
         item = line.split('. ', 1)[1]
-        nomesGerados.append(item)
+        nomesGerados.append(f"{item} ")
         
     return nomesGerados
 
