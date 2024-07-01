@@ -5,6 +5,8 @@ import BasicButton from "../../components/Buttons/BasicButton";
 import Header from "../../components/Header";
 import BasicTitle from "../../components/Titles";
 import Chat from "../../components/Inputs/Chat";
+import StripeCheckout from "../../components/Stripe/CheckoutForm";
+import { Link } from "wouter";
 
 interface Message {
   id: number;
@@ -25,7 +27,8 @@ const formatPrice = (price: string | number): string => {
 const ChatPage: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
-  const [searchResults, setSearchResults] = useState<string[]>([]); // Initialize as string[] for domain names
+  const [paymentScreen, setPaymentScreen] = useState(false);
+  const [searchResults, setSearchResults] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -79,49 +82,82 @@ const ChatPage: React.FC = () => {
     await handleSendMessage();
   };
 
+  const handlePayment = () => {
+    console.log(paymentScreen);
+    setPaymentScreen(!paymentScreen);
+    console.log(paymentScreen);
+  };
+
+  const handleClosePaymentScreen = () => {
+    setPaymentScreen(false);
+  };
+
+  const handleInnerClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Impede que o clique no StripeCheckout feche o contêiner
+  };
+
   return (
-    <S.AppContainer>
-      <Header />
-      <BasicTitle>Escreva sobre seu empreendimento:</BasicTitle>
-      <S.Content>
-        <S.SearchContainer>
-          <form onSubmit={handleSubmit}>
-            <Chat
-              messages={messages}
-              inputValue={inputValue}
-              onInputChange={setInputValue}
-              onSendMessage={handleSendMessage}
-            />
-            <BasicButton type="submit" disabled={loading}>
-              {loading ? (
-                <img
-                  className="gif-loading"
-                  src="/img/loading.gif"
-                  alt="loading"
-                />
-              ) : (
-                "Buscar"
-              )}
-            </BasicButton>
-          </form>
-        </S.SearchContainer>
-        <S.SearchResultsContainer>
-          {searchResults.length > 0 && (
-            <>
-              {searchResults.map((domainObject, index) => (
-                <S.SearchResultItem key={index}>
-                  <S.SearchResultTitle>
-                    {Object.values(domainObject)}
-                  </S.SearchResultTitle>
-                  <hr />
-                  {/* Render details for each domain if needed */}
-                </S.SearchResultItem>
-              ))}
-            </>
-          )}
-        </S.SearchResultsContainer>
-      </S.Content>
-    </S.AppContainer>
+    <>
+      {paymentScreen && (
+        <S.PaymentContainer onClick={handleClosePaymentScreen}>
+          <div className="payment-form" onClick={handleInnerClick}>
+            <StripeCheckout />
+          </div>
+        </S.PaymentContainer>
+      )}
+      <S.AppContainer>
+        {!paymentScreen && <Header />}
+        <BasicTitle>Escreva sobre seu empreendimento:</BasicTitle>
+        <S.Content>
+          <S.SearchContainer>
+            <form onSubmit={handleSubmit}>
+              <Chat
+                messages={messages}
+                inputValue={inputValue}
+                onInputChange={setInputValue}
+                onSendMessage={handleSendMessage}
+              />
+              <BasicButton type="submit" disabled={loading}>
+                {loading ? (
+                  <img
+                    className="gif-loading"
+                    src="/img/loading.gif"
+                    alt="loading"
+                  />
+                ) : (
+                  "Buscar"
+                )}
+              </BasicButton>
+            </form>
+          </S.SearchContainer>
+          <S.SearchResultsContainer>
+            {searchResults.length > 0 && (
+              <>
+                {searchResults.map((domainObject, index) => (
+                  <S.SearchResultItem key={index}>
+                    <Link
+                      className="link"
+                      onClick={() => setPaymentScreen(!paymentScreen)}
+                      href="#"
+                    >
+                      <S.SearchResultTitle>
+                        {Object.values(domainObject)}
+                      </S.SearchResultTitle>
+                    </Link>
+                  </S.SearchResultItem>
+                ))}
+              </>
+            )}
+            {/* <button
+              onClick={() => setPaymentScreen(!paymentScreen)}
+              type="button"
+            >
+              TESTE
+            </button> */}
+          </S.SearchResultsContainer>
+        </S.Content>
+      </S.AppContainer>
+    </>
   );
 };
 
