@@ -1,3 +1,5 @@
+# AJUSTAR AS FUNÇÕES INSERIDAS E REMOVER AS FUNÇÕES ANTIGAS
+
 import json
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
@@ -6,7 +8,8 @@ from gemini.models import GeminiAssistant
 from godaddy.views import verificar_dominios
 import random
 from langdetect import detect
-from googletrans import Translator
+from google.api_core.exceptions import ResourceExhausted
+import time
 
 def gemini_dominios(request):
     assistant = GeminiAssistant()
@@ -20,79 +23,134 @@ def gemini_dominios(request):
 def teste(request):
     return HttpResponse('testou e deu certo')
 
-def iniciar_chat(palavras_principais,assistant:GeminiAssistant):
-        bem_vindo = "##"
-        print(len(bem_vindo) * "#")
-        print(bem_vindo)
+def iniciar_chat(palavras_principais, assistant: GeminiAssistant):
+    bem_vindo = "##"
+    print(len(bem_vindo) * "#")
+    print(bem_vindo)
 
-        palavras_relacionadas = gerar_palavras_relacionadas(palavras_principais,assistant)
+    while True:
+        palavras_relacionadas = assistant.gerar_palavras_relacionadas(palavras_principais)
         palavras_relacionadas_lista = palavras_relacionadas.split('\n')
-        palavras = [p.lower().replace('-', '') for p in palavras_relacionadas_lista if p.strip()]  
+        palavras = [p.lower().replace('-', '') for p in palavras_relacionadas_lista if p.strip()]
 
-        extensoes_br = ["com.br", "net.br", "org.br", "com", "br", "net"]  
-        dominios_br = gerar_dominios(palavras, extensoes_br)
-        return dominios_br
+        dominios = gerar_dominios(palavras, assistant.extensao_dominio)
 
-def translate_to_english(self, word):
-    translation = self.translator.translate(word, src='pt', dest='en')
-    return translation.text
+        print("Domínios:")
+        for dominio in dominios:
+            print(dominio)
 
-def translate_to_portuguese(self, words):
-    translations = []
-    for word in words:
-        translation = self.translator.translate(word, src='en', dest='pt')
-        translations.append(translation.text)
-    return translations
+            # Selecionar um domínio aleatório da lista gerada
+        dominio_interesse = random.choice(dominios).split('.')[0]
+
+        adjetivos = gerar_adjetivos_aleatorios(assistant)
+        if not adjetivos:
+            print("Erro ao gerar adjetivos. Tentando novamente.")
+            continue
+        print(f"Adjetivos aleatórios selecionados: {', '.join(adjetivos)}")
+
+            # Geração de domínios modificados com base nos adjetivos aleatórios
+        dominios_modificados = gerar_dominios_modificados_com_adjetivos(dominio_interesse, "", adjetivos, assistant)
+
+        if not dominios_modificados:
+            print("Nenhum domínio modificado foi gerado com os adjetivos/palavras fornecidos.")
+        else:
+            print("Domínios melhorados:")
+            for dominio in dominios_modificados:
+                # Remover numeração e asteriscos
+                dominio_limpo = re.sub(r'^[0-9]+\.\s*\*\s*', '', dominio).strip()
+                print(dominio_limpo)
+
+        break  # Encerrar o loop após uma interação
+
+    print("Encerrando chat!")
 
 def gerar_dominios(palavras, extensoes):
-    dominios = []
-    for palavra in palavras:
-        palavra_sem_acentos = re.sub(r'[áàâãä]', 'a', palavra, flags=re.IGNORECASE)
-        palavra_sem_acentos = re.sub(r'[éèêë]', 'e', palavra_sem_acentos, flags=re.IGNORECASE)
-        palavra_sem_acentos = re.sub(r'[íìîï]', 'i', palavra_sem_acentos, flags=re.IGNORECASE)
-        palavra_sem_acentos = re.sub(r'[óòôõö]', 'o', palavra_sem_acentos, flags=re.IGNORECASE)
-        palavra_sem_acentos = re.sub(r'[úùûü]', 'u', palavra_sem_acentos, flags=re.IGNORECASE)
-        palavra_sem_acentos = re.sub(r'[ç]', 'c', palavra_sem_acentos, flags=re.IGNORECASE)
-        palavra_sem_acentos = re.sub(r'[^a-zA-Z0-9-]', '', palavra_sem_acentos)  
-        palavra_sem_acentos = palavra_sem_acentos.replace(' ', '-')  
-        for extensao in extensoes:
-            dominios.append(f"{palavra_sem_acentos}.{extensao}")
-    return dominios
+        dominios = []
+        for palavra in palavras:
+            palavra_sem_acentos = re.sub(r'[áàâãä]', 'a', palavra, flags=re.IGNORECASE)
+            palavra_sem_acentos = re.sub(r'[éèêë]', 'e', palavra_sem_acentos, flags=re.IGNORECASE)
+            palavra_sem_acentos = re.sub(r'[íìîï]', 'i', palavra_sem_acentos, flags=re.IGNORECASE)
+            palavra_sem_acentos = re.sub(r'[óòôõö]', 'o', palavra_sem_acentos, flags=re.IGNORECASE)
+            palavra_sem_acentos = re.sub(r'[úùûü]', 'u', palavra_sem_acentos, flags=re.IGNORECASE)
+            palavra_sem_acentos = re.sub(r'[ç]', 'c', palavra_sem_acentos, flags=re.IGNORECASE)
+            palavra_sem_acentos = re.sub(r'[^a-zA-Z0-9-_]', '', palavra_sem_acentos)  
+            palavra_sem_acentos = palavra_sem_acentos.replace(' ', '_').replace('--', '-').strip('-_') 
+            for extensao in extensoes:
+                if extensao.startswith('.'):
+                    extensao = extensao[1:]
+                dominios.append(f"{palavra_sem_acentos}.{extensao}")
+        return random.sample(dominios, min(20, len(dominios)))
 
-def gerar_palavras_relacionadas(palavras,assistant: GeminiAssistant):
-    palavras_string = palavras.split(',')
-    # prompt_palavras_relacionadas = f"A partir da lista {palavras_string}, gere uma nova lista para cada item com sinônimos/palavras relacionadas seguindo o seguinte modelo:\n\nPalavra1\nSinônimo1\nSinônimo2\nSinônimo3\nSinônimo4\n...\nSinônimo10\n\nPalavra2\nSinônimo1\nSinônimo2\nSinônimo3\nSinônimo4\n...\nSinônimo10\n\nPalavra3\n...\n\n(Não escreva nenhuma definição. Apenas LISTE as palavras e quero no maximo uma lista de ate 10 palavras)"
-    print(palavras_string)
-    prompt_palavras_relacionadas = f"A partir da lista {palavras_string},gere uma lista de sinonimos para cada palavra dessa lista que te passei. Observação: deve conter somente 1 sinonimo por palavra da lista."
-    resposta_palavras_relacionadas = assistant.model.generate_content(prompt_palavras_relacionadas)
-    return resposta_palavras_relacionadas.text
+def gerar_dominios_modificados_com_adjetivos(dominio_interesse, explicacao, adjetivos, assistant: GeminiAssistant): # NOVA FUNÇÃO A SER MODIFICADA PARA A BRANCH
+    prompt = f"A partir do domínio {dominio_interesse} e da descrição do negócio: {explicacao}, gere uma lista de 10 domínios melhorados incorporando as seguintes palavras/adjetivos: {', '.join(adjetivos)}."
 
-def refinar(urls_geradas, urls_selecionadas, num_novas_urls, assistant: GeminiAssistant):
-    termos_comuns = ["loja", "store", "supermercado", "mercado", "gym", "instituto"]
-    urls_geradas_string = "\n".join(urls_geradas)
-    urls_selecionadas_string = "\n".join(urls_selecionadas)
+    try:
+        resposta = assistant.model.generate_content(prompt)
+        time.sleep(2)  # Pausa de 2 segundos entre as requisições
 
-    prompt_refino = f"A partir da lista a seguir:\n\n{urls_geradas_string}\nApenas os seguintes itens são úteis:\n\n{urls_selecionadas_string}\nGere outros {num_novas_urls} domínios semelhantes a esses"
+        # Verificação se o campo 'text' está presente na resposta
+        if hasattr(resposta, 'text'):
+            dominios_modificados = resposta.text.strip().split('\n')
+        else:
+            print("A resposta não contém o campo 'text'. Verifique as classificações de segurança do candidato.")
+            dominios_modificados = []
 
-    resposta_refino = assistant.model.generate_content(prompt_refino)
+    except ResourceExhausted as e:
+        print(f"Erro: Limite de requisições excedido. {e}")
+        dominios_modificados = []
 
-    palavras_refinadas = resposta_refino.text.split('\n')
-    palavras_refinadas = [palavra.strip() for palavra in palavras_refinadas if palavra.strip() and not re.search(r'\d', palavra)]
+    # Remover caracteres indesejados e adicionar extensões aleatórias
+    dominios_limpos = []
+    for dominio in dominios_modificados:
+        dominio = re.sub(r'^[0-9]+\.\s*', '', dominio).strip()  # Remove numeração
+        dominio = re.sub(r'\*\*Domain:\*\*\s*|\*\*$', '', dominio).strip()  # Remove '**Domain:**' e '**'
+        dominio = dominio.replace("..", ".")  # Corrige a ocorrência de '..'
+        for extensao in random.sample(assistant.extensao_dominio, 5):
+            if extensao.startswith('.'):
+                extensao = extensao[1:]
+            dominios_limpos.append(f"{dominio}.{extensao}")
 
-    random.shuffle(palavras_refinadas)
+    return random.sample(dominios_limpos, min(20, len(dominios_limpos)))
 
-    combinacoes = []
-    for palavra in palavras_refinadas:
-        for termo_comum in termos_comuns:
-            combinacoes.append(f"{termo_comum}-{palavra}")
-            combinacoes.append(f"{palavra}-{termo_comum}")
+def gerar_palavras_relacionadas(palavras_principais, assistant: GeminiAssistant): #AJUSTAR PARA A BRANCH
+    palavras_string = ', '.join(palavras_principais)
+    lingua_dominante = detect(palavras_string)
 
-    todas_palavras = palavras_refinadas + combinacoes
+    if lingua_dominante == 'pt':
+        prompt_palavras_relacionadas = f"A partir da lista {palavras_string}, gere uma nova lista para cada item com 10 sinônimos/palavras relacionadas em português seguindo o seguinte modelo:\n\nPalavra1 (Português)\nSinônimo1 (Português)\nSinônimo2 (Português)\nSinônimo3 (Português)\nSinônimo4 (Português)\n...\nSinônimo10 (Português)"
+    else:
+        prompt_palavras_relacionadas = f"A partir da lista {palavras_string}, gere uma nova lista para cada item com 10 sinônimos/palavras relacionadas em inglês e português seguindo o seguinte modelo:\n\nPalavra1 (Português)\nSinônimo1 (Português)\nSinônimo2 (Português)\nSinônimo3 (Português)\nSinônimo4 (Português)\n...\nSinônimo10 (Português)\n\nPalavra1 (English)\nSinônimo1 (English)\nSinônimo2 (English)\nSinônimo3 (English)\nSinônimo4 (English)\n...\nSinônimo10 (English)"
+        
+    try:
+        resposta = assistant.model.generate_content(prompt_palavras_relacionadas)
+        time.sleep(2)  # Pausa de 2 segundos entre as requisições
 
-    random_combinacoes = random.sample(todas_palavras, min(num_novas_urls, len(todas_palavras)))
+        if hasattr(resposta, 'text'):
+            palavras_relacionadas = resposta.text.strip()
+        else:
+            print("A resposta não contém o campo 'text'. Verifique as classificações de segurança do candidato.")
+            palavras_relacionadas = ""
 
-    dominios_refinados = gerar_dominios(random_combinacoes, ["com.br", "net.br", "org.br", "com", "br", "net"])
+    except ResourceExhausted as e:
+        print(f"Erro: Limite de requisições excedido. {e}")
+        palavras_relacionadas = ""
 
-    print("Domínios Refinados:\n" + "\n".join(dominios_refinados), end="\n\n")
+    return palavras_relacionadas
 
-    return dominios_refinados
+def gerar_adjetivos_aleatorios(assistant: GeminiAssistant): # AJUSTAR PARA A BRANCH
+    prompt = "Gere uma lista de 10 adjetivos em português que podem ser usados para melhorar nomes de domínio."
+    try:
+        resposta = assistant.model.generate_content(prompt)
+        time.sleep(2)  # Pausa de 2 segundos entre as requisições
+            
+        if hasattr(resposta, 'text'):
+            adjetivos_possiveis = resposta.text.strip().split('\n')
+            adjetivos_aleatorios = random.sample(adjetivos_possiveis, 3)
+        else:
+            print("A resposta não contém o campo 'text'. Verifique as classificações de segurança do candidato.")
+            adjetivos_aleatorios = []
+    except ResourceExhausted as e:
+        print(f"Erro: Limite de requisições excedido. {e}")
+        adjetivos_aleatorios = []
+
+    return adjetivos_aleatorios
