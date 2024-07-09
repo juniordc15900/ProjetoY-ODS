@@ -57,7 +57,7 @@ def gerarNovaPergunta(assistant, perguntasLista):
     
     return prompt_response
 
-def novoPrompt(perguntas):
+def novoPrompt(perguntas, aprovados, reprovados):
     
     comandoPrincipal = "Estou com dificuldades para escolher o nome do meu novo empreendimento. Gere uma lista de nomes a partir das seguintes perguntas e respostas:"
     
@@ -67,8 +67,23 @@ def novoPrompt(perguntas):
         perguntasRespostas = perguntasRespostas + "\n"
     
     detalhesComando = "Gere uma lista no seguinte modelo:\n\nLista - Gemini\n\n1. -----\n2. -----\n3. -----\n....\n\nNão adicione dicas, título, descrições ou qualquer texto extra. Busque ser criativo e evite gerar nomes genéricos"
+
+    aprovadosLista = "Além disso, aqui estão alguns nomes gerados anteriormente aprovados. Os nomes gerados devem ser semelhantes aos seguintes:\n\n"
+
+    for nome in aprovados:
+        aprovadosLista = aprovadosLista + nome
+        aprovadosLista = aprovadosLista + "\n"
+
+    reprovadosLista = "Por fim, aqui estão alguns nomes gerados anteriormente reprovados. Evite gerar nomes semelhantes a esses:"
+
+    for nome in reprovados:
+        reprovadosLista = reprovadosLista + nome
+        reprovadosLista = reprovadosLista + "\n"
+
     
-    prompt = f"{comandoPrincipal}\n\n{perguntasRespostas}\n{detalhesComando}"
+    prompt = f"{comandoPrincipal}\n\n{perguntasRespostas}\n{detalhesComando}\n\n{aprovadosLista}\n\n{reprovadosLista}"
+
+    print(prompt)
     
     return prompt
   
@@ -97,49 +112,12 @@ def gerarNomes(request):
     
     elif(flag == 2):
         resposta = request.GET['resposta']
+        nomes_aprovados = request.GET.getlist('nomes_aprovados', [])
+        nomes_reprovados = request.GET.getlist('nomes_reprovados', [])
         ultima_pergunta_index = len(perguntas)-1
         receberResposta(perguntas[ultima_pergunta_index], resposta, perguntas)
         
-        promptResponse = assistant.model.generate_content(novoPrompt(perguntas)).text
+        promptResponse = assistant.model.generate_content(novoPrompt(perguntas, nomes_aprovados, nomes_reprovados)).text
         nomes = formataNomes(promptResponse)
         
         return HttpResponse(nomes)
-    
-'''
-def main():
-
-    assistant = GeminiNomeRecomenda()
-    
-    prompt = ""
-    perguntas = []
-    listaDeNomes = []
-    nomesEscolhidos = []
-    
-    prompt = initPrompt(prompt, perguntas)
-    
-    while True:
-        prompt_response = assistant.model.generate_content(prompt).text
-        print(prompt_response)
-        
-        adicionaNomes(listaDeNomes, prompt_response)
-        escolherMelhoresNomes(nomesEscolhidos, listaDeNomes)
-
-        while True:
-            if len(nomesEscolhidos) > 0:
-                print("Deseja continuar? (S/N)")
-                resposta = input()
-                
-                if resposta.upper() == "N":
-                    print(f"Nomes escolhidos: {nomesEscolhidos}")
-                    return nomesEscolhidos
-                elif resposta.upper() == "S":
-                    gerarNovaPergunta(assistant, perguntas)
-                    prompt = novoPrompt(perguntas)
-                    break
-                else:
-                    print("Resposta inválida")
-            else:
-                gerarNovaPergunta(perguntas)
-                prompt = novoPrompt(perguntas)
-                break
-'''
