@@ -5,21 +5,23 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 import re
 from gemini.models import GeminiAssistant
+<<<<<<< HEAD
 from godaddy.views import verificar_dominios
 import random
 from langdetect import detect
 from google.api_core.exceptions import ResourceExhausted
 import time
+=======
+>>>>>>> main
 
 def gemini_dominios(request):
     assistant = GeminiAssistant()
     palavras_principais = request.GET['palavras']
     # palavras_principais = ["Floricultura", "Lótus", "Rosas"]
     response = iniciar_chat(palavras_principais,assistant)
+    print(response)
     response_data = {'dominios': response}
-    print(response_data)
-    response = verificar_dominios(response_data)
-    return HttpResponse(response)
+    return HttpResponse(json.dumps(response_data))
 def teste(request):
     return HttpResponse('testou e deu certo')
 
