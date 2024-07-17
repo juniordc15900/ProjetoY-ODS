@@ -3,15 +3,13 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path("godaddy/", include("godaddy.urls")),
-    path("gemini/", include("gemini.urls")),
-	path('admin/', admin.site.urls),
-	path('/', views.home, name ="index"),
-    path('login/', views.signIn),
-    path('postsignIn/', views.postsignIn),
-    path('signUp/', views.signUp, name="signup"),
-    path('logout/', views.logout, name="log"),
-    path('postsignUp/', views.postsignUp),
-    path("search/", include("flow.urls")),
-    
+    path('registrar_usuario/', views.registrar_usuario, name='registrar_usuario'),
+    path('adicionar_dominio/', views.adicionar_dominio, name='adicionar_dominio'),
+    path('iniciar_sessao/', views.iniciar_sessao, name='iniciar_sessao'),
+    path('registrar_clique/', views.registrar_clique, name='registrar_clique'),
+    path('listar_dominios/', views.listar_dominios, name='listar_dominios'),
+    path('login/', views.login, name='login'),
+    path('postsignIn/', views.postsignIn, name='postsignIn'),
+    path('logout/', views.logout, name='logout'),
+    path('google_login/', views.google_login, name='google_login'),
 ]

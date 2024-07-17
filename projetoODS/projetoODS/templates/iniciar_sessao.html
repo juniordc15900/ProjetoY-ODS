@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Iniciar Sessão</h2>
+    <form method="post" action="{% url 'iniciar_sessao' %}">
+        {% csrf_token %}
+        <label for="usuario_id">ID do Usuário:</label>
+        <input type="text" id="usuario_id" name="usuario_id" required><br>
+        <button type="submit">Iniciar Sessão</button>
+    </form>
+{% endblock %}

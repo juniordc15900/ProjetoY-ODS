@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Registrar Clique</h2>
+    <form method="post" action="{% url 'registrar_clique' %}">
+        {% csrf_token %}
+        <label for="sessao_id">ID da Sessão:</label>
+        <input type="text" id="sessao_id" name="sessao_id" required><br>
+        <label for="pagina">Página:</label>
+        <input type="text" id="pagina" name="pagina" required><br>
+        <label for="elemento">Elemento:</label>
+        <input type="text" id="elemento" name="elemento" required><br>
+        <button type="submit">Registrar Clique</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Login com Google</h2>
+    <button onclick="googleSignIn()">Login com Google</button>
+    <script>
+        function googleSignIn() {
+            var provider = new firebase.auth.GoogleAuthProvider();
+            firebase.auth().signInWithPopup(provider).then(function(result) {
+                var token = result.credential.accessToken;
+                var user = result.user;
+                // Enviar o token para o backend para validação
+                fetch('/google_login/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({token: token, email: user.email})
+                }).then(response => response.json())
+                  .then(data => {
+                      if (data.status === 'success') {
+                          window.location.href = '/home/';
+                      } else {
+                          alert('Login com Google falhou');
+                      }
+                  });
+            }).catch(function(error) {
+                console.error('Erro ao fazer login com Google: ', error);
+            });
+        }
+    </script>
+{% endblock %}

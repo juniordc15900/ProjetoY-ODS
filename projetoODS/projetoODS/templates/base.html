@@ -1,0 +1,30 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Contas</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script>
+        var firebaseConfig = {
+            apiKey: "API_KEY",
+            authDomain: "PROJECT_ID.firebaseapp.com",
+            databaseURL: "https://PROJECT_ID.firebaseio.com",
+            projectId: "PROJECT_ID",
+            storageBucket: "PROJECT_ID.appspot.com",
+            messagingSenderId: "SENDER_ID",
+            appId: "APP_ID",
+            measurementId: "G-MEASUREMENT_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
+</head>
+<body>
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

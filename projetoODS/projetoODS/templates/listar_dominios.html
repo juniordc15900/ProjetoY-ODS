@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Listar Domínios</h2>
+    <form method="get" action="{% url 'listar_dominios' %}">
+        <label for="usuario_id">ID do Usuário:</label>
+        <input type="text" id="usuario_id" name="usuario_id" required><br>
+        <button type="submit">Listar Domínios</button>
+    </form>
+    {% if dominios %}
+        <h3>Domínios:</h3>
+        <ul>
+            {% for dominio in dominios %}
+                <li>{{ dominio.nome }} - Vencimento: {{ dominio.vencimento }} - Valor: {{ dominio.valor }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

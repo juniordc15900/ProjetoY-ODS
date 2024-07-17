@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'godaddy',
-    'corsheaders'
-]
+    'corsheaders',
+    'projetoODS', ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -123,7 +123,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'frontend/build/static')
+    os.path.join(BASE_DIR, 'frontend/build/static')  # Ajuste este caminho conforme necessário
 ]
 
 # Default primary key field type
